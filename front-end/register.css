@@ -1,0 +1,135 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Background with image + overlay */
+body {
+    background: 
+        linear-gradient(rgba(11, 31, 58, 0.7), rgba(11, 31, 58, 0.7)),
+        url("photo/mciu.jpg") no-repeat center center/cover;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Main Card */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    padding: 30px;
+    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+/* Logo */
+.logo-section {
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #0b1f3a;
+}
+
+/* Inputs */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+/* Focus effect */
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #d4af37;
+    outline: none;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+}
+
+/* ================= PASSWORD EYE ICON STYLING ================= */
+
+.password-box .input-wrapper {
+    position: relative;
+}
+
+.password-box .input-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* space for eye icon */
+}
+
+.password-box .toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    font-size: 14px;
+}
+
+.password-box .toggle:hover {
+    color: #0b1f3a;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #d4af37;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 15px;
+}
+
+button:hover {
+    background: #b8962e;
+    transform: translateY(-1px);
+}
+
+/* Login text */
+.login-text {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-text a {
+    color: #0b1f3a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}

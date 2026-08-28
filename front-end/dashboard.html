@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+/* ================= RESET ================= */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#f4f6f9;
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+height:65px;
+background:#fff;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.title{
+font-weight:600;
+color:#0b1f3a;
+}
+
+/* notification */
+.nav-right{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.bell{
+position:relative;
+font-size:18px;
+cursor:pointer;
+}
+
+.badge{
+position:absolute;
+top:-6px;
+right:-6px;
+background:red;
+color:white;
+font-size:10px;
+padding:2px 6px;
+border-radius:50%;
+display:none;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+position:fixed;
+top:0;
+left:0;
+width:240px;
+height:100%;
+background:#0b1f3a;
+padding-top:70px;
+transform:translateX(-100%);
+transition:0.25s;
+z-index:2000;
+}
+
+.sidebar.active{
+transform:translateX(0);
+}
+
+.sidebar a{
+display:block;
+padding:14px 18px;
+color:white;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#d4af37;
+}
+
+.logout{
+color:#ff6b6b;
+}
+
+/* ================= MAIN ================= */
+.main{
+padding:90px 20px;
+max-width:900px;
+margin:auto;
+}
+
+/* WELCOME BOARD */
+.welcome{
+background:linear-gradient(135deg,#0b1f3a,#122b4a);
+color:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+.welcome h2{
+font-size:20px;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.btn{
+background:#d4af37;
+color:white;
+padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+width:100%;
+margin-top:10px;
+}
+
+.btn:disabled{
+background:#ccc;
+cursor:not-allowed;
+}
+
+/* STATUS */
+.status{
+font-weight:600;
+}
+
+.good{color:green;}
+.bad{color:red;}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+<a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+<a href="allocation.html"><i class="fas fa-bed"></i> Hostel Allocation</a>
+<a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+<a href="notification.html"><i class="fas fa-bell"></i> Notifications</a>
+<a href="academic.html"><i class="fas fa-graduation-cap"></i> Academic Records</a>
+<a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+<a href="contact.html"><i class="fas fa-user"></i> Contact Us</a>
+<a href="#" class="logout" onclick="logout()">
+<i class="fas fa-sign-out-alt"></i> Logout
+</a>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+<div class="nav-left">
+<i class="fas fa-bars" onclick="toggleSidebar()" style="cursor:pointer;"></i>
+<img src="photo/mciu.jpg" class="logo">
+<div class="title">MCIU Hostel Portal</div>
+</div>
+
+<div class="nav-right">
+
+<div class="bell">
+<i class="fas fa-bell"></i>
+<span id="notif" class="badge"></span>
+</div>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- WELCOME -->
+<div class="welcome">
+<h2 id="welcomeText">Welcome Student</h2>
+<p>Hostel & Exam Management Portal</p>
+</div>
+
+<!-- INFO -->
+<div class="card">
+<h3>Student Info</h3>
+<p>Name: <span id="name"></span></p>
+<p>Display Name: <span id="displayName"></span></p>
+</div>
+
+<!-- ELIGIBILITY -->
+<div class="card">
+<h3>Eligibility Status</h3>
+<p id="eligibility"></p>
+</div>
+
+<!-- PAYMENT -->
+<div class="card">
+<h3>Payment Status</h3>
+<p id="payment"></p>
+</div>
+
+<!-- HOSTEL -->
+<div class="card">
+<h3>Hostel Allocation</h3>
+<p id="hostel">Not Allocated</p>
+
+<button id="allocBtn" class="btn" onclick="goAllocation()">
+Go to Allocation
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let user;
+
+/* SIDEBAR */
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("active");
+}
+
+/* NAVIGATION */
+function goAllocation(){
+location.href="/allocation.html";
+}
+
+/* LOAD USER */
+async function loadUser(){
+
+const res = await fetch("http://localhost:5000/api/user", {
+credentials:"include"
+});
+
+const data = await res.json();
+
+if(!data.success){
+location.href="/login";
+return;
+}
+
+user = data.user;
+
+/* DISPLAY NAME */
+let display = user.displayName || user.name;
+
+document.getElementById("welcomeText").innerText =
+"Welcome, " + display;
+
+document.getElementById("name").innerText = user.name;
+document.getElementById("displayName").innerText = display;
+
+/* PAYMENT */
+document.getElementById("payment").innerText =
+user.paymentStatus || "Not Submitted";
+
+/* ELIGIBILITY */
+let eligible =
+(user.paymentStatus === "Paid" || user.amnestyStatus === "Approved");
+
+document.getElementById("eligibility").innerText =
+eligible ? "APPROVED - You can proceed" : "NOT APPROVED - Access Restricted";
+
+document.getElementById("eligibility").className =
+eligible ? "good" : "bad";
+
+/* BUTTON CONTROL */
+document.getElementById("allocBtn").disabled = !eligible;
+
+/* HOSTEL */
+document.getElementById("hostel").innerText =
+user.hostelBlock
+? user.hostelBlock + " Block - Room " + user.roomNumber
+: "Not Allocated";
+
+/* NOTIFICATIONS (backend-ready) */
+loadNotifications();
+
+}
+
+/* NOTIFICATIONS */
+async function loadNotifications(){
+
+const res = await fetch("http://localhost:5000/api/messages", {
+credentials:"include"
+});
+
+const data = await res.json();
+
+if(data.messages && data.messages.length > 0){
+document.getElementById("notif").style.display="block";
+document.getElementById("notif").innerText = data.messages.length;
+}
+
+}
+
+/* LOGOUT */
+async function logout(){
+await fetch("http://localhost:5000/logout", {
+method:"POST",
+credentials:"include"
+});
+location.href="/login";
+}
+
+loadUser();
+
+</script>
+
+</body>
+</html>

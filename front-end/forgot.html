@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI', sans-serif;
+
+    background: url("photo/mciu.jpg") no-repeat center center fixed;
+    background-size: cover;
+
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+
+/* dark overlay */
+body::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.55);
+}
+
+/* MAIN CARD */
+.container{
+    width:420px;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    position:relative;
+    z-index:1;
+}
+
+/* LOGO */
+.logo{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.logo img{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+}
+
+/* TITLE */
+h2{
+    text-align:center;
+    color:#0b1f3a;
+    margin-bottom:10px;
+}
+
+/* INPUTS */
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+input:focus{
+    border:1px solid #d4af37;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:12px;
+    background:#d4af37;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+button:hover{
+    background:#bc9b30;
+}
+
+/* MESSAGE */
+.msg{
+    text-align:center;
+    font-size:13px;
+    margin:10px 0;
+    font-weight:600;
+}
+
+/* STEPS */
+.step{
+    text-align:center;
+    font-size:12px;
+    color:#666;
+    margin-top:5px;
+}
+
+hr{
+    margin:15px 0;
+    border:0.5px solid #eee;
+}
+
+/* SUCCESS SCREEN */
+.success-box{
+    display:none;
+    text-align:center;
+    padding:20px;
+}
+
+.success-box h3{
+    color:green;
+    margin-bottom:10px;
+}
+
+.success-box p{
+    font-size:14px;
+    margin-bottom:15px;
+}
+
+.success-box a{
+    display:inline-block;
+    padding:12px 18px;
+    background:#0b1f3a;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.success-box a:hover{
+    background:#061225;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- RESET FORM -->
+    <div id="resetForm">
+
+        <!-- LOGO -->
+        <div class="logo">
+            <img src="photo/mciu.jpg" alt="school logo">
+        </div>
+
+        <h2>Reset Password</h2>
+
+        <p class="msg" id="msg"></p>
+
+        <!-- STEP 1 -->
+        <input type="email" id="email" placeholder="Enter Email">
+        <button onclick="sendCode()">Send Code</button>
+        <p class="step">Step 1: Get verification code</p>
+
+        <hr>
+
+        <!-- STEP 2 -->
+        <input type="text" id="otp" placeholder="Enter 4-digit code">
+        <button onclick="verifyCode()">Verify Code</button>
+        <p class="step">Step 2: Verify code sent to email</p>
+
+        <hr>
+
+        <!-- STEP 3 -->
+        <input type="password" id="newPassword" placeholder="New Password">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+        <button onclick="resetPassword()">Reset Password</button>
+        <p class="step">Step 3: Set new password</p>
+
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success-box" id="successBox">
+        <h3>Password Reset Successful ✔</h3>
+        <p>You can now login with your new password.</p>
+        <a href="/login">Go to Login</a>
+    </div>
+
+</div>
+
+<script>
+
+async function sendCode(){
+    const email = document.getElementById("email").value;
+
+    const res = await fetch("http://localhost:5000/send-reset-code", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    document.getElementById("msg").innerText = data.message;
+}
+
+async function verifyCode(){
+    const email = document.getElementById("email").value;
+    const code = document.getElementById("otp").value;
+
+    const res = await fetch("http://localhost:5000/verify-reset-code", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ email, code })
+    });
+
+    const data = await res.json();
+    document.getElementById("msg").innerText = data.message;
+}
+
+async function resetPassword(){
+    const email = document.getElementById("email").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    const res = await fetch("http://localhost:5000/reset-password", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            email,
+            newPassword,
+            confirmPassword
+        })
+    });
+
+    const data = await res.json();
+    document.getElementById("msg").innerText = data.message;
+
+    if(data.success){
+        document.getElementById("resetForm").style.display = "none";
+        document.getElementById("successBox").style.display = "block";
+    }
+}
+
+</script>
+
+</body>
+</html>

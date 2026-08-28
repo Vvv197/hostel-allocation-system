@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin - Payment Verification</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #f5f7fb;
+            padding: 30px;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+
+        h1 {
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+            color: #666;
+        }
+
+
+        .top-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .top-button {
+            border: none;
+            padding: 11px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+
+        .refresh {
+            background: #1f2937;
+            color: white;
+        }
+
+
+        .logout {
+            background: #dc2626;
+            color: white;
+        }
+
+
+        .top-button:hover {
+            opacity: 0.85;
+        }
+
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, .08);
+        }
+
+
+        .student {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+
+        .student p {
+            color: #444;
+        }
+
+
+        .student strong {
+            color: #111827;
+        }
+
+
+        .receipt {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+
+        .receipt a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+        .receipt a:hover {
+            text-decoration: underline;
+        }
+
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+
+        .approve {
+            background: #16a34a;
+            color: white;
+        }
+
+
+        .reject {
+            background: #dc2626;
+            color: white;
+        }
+
+
+        button:hover {
+            opacity: .85;
+        }
+
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+
+        .verified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+
+        .rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+
+        #message {
+            margin-bottom: 20px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+
+        .admin-info {
+            background: #fff8e1;
+            border-left: 5px solid #d4af37;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+
+        @media(max-width:700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .student {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-buttons {
+                width: 100%;
+            }
+
+            .top-button {
+                flex: 1;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ================= TOP BAR ================= -->
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>
+                Admin Payment Verification
+            </h1>
+
+            <p class="subtitle">
+                Review student payment receipts and approve or reject them.
+            </p>
+
+        </div>
+
+
+        <div class="top-buttons">
+
+            <button
+                class="top-button refresh"
+                onclick="loadStudents()"
+            >
+                ↻ Refresh
+            </button>
+
+
+            <button
+                class="top-button logout"
+                onclick="logoutAdmin()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= ADMIN INFO ================= -->
+
+    <div class="admin-info">
+
+        🔐 <strong>Administrator Area</strong>
+
+        <br>
+
+        Only authorized administrators can access
+        student payment records and receipts.
+
+    </div>
+
+
+    <p id="message"></p>
+
+
+    <!-- ================= STUDENTS ================= -->
+
+    <div id="usersContainer">
+
+        <div class="card empty">
+
+            Loading payment records...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const container =
+    document.getElementById("usersContainer");
+
+
+const message =
+    document.getElementById("message");
+
+
+
+/* =====================================================
+   CHECK ADMIN LOGIN
+===================================================== */
+
+async function checkAdminAccess() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/admin/check",
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            window.location.href =
+                "/admin-login.html";
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        window.location.href =
+            "/admin-login.html";
+
+        return false;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD STUDENTS
+===================================================== */
+
+async function loadStudents() {
+
+    const allowed =
+        await checkAdminAccess();
+
+
+    if (!allowed) {
+        return;
+    }
+
+
+    container.innerHTML = `
+        <div class="card empty">
+            Loading payment records...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/admin/users",
+                {
+                    credentials: "include"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (response.status === 401 ||
+            response.status === 403) {
+
+            window.location.href =
+                "/admin-login.html";
+
+            return;
+
+        }
+
+
+        if (!data.success) {
+
+            container.innerHTML = `
+                <div class="card empty">
+                    ${escapeHTML(
+                        data.message ||
+                        "Unable to load students."
+                    )}
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        const students =
+            data.users || [];
+
+
+        /*
+        Only show students who
+        uploaded receipts.
+        */
+
+        const submittedStudents =
+            students.filter(user =>
+                user.receipt &&
+                user.receipt.filename
+            );
+
+
+        if (
+            submittedStudents.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="card empty">
+                    No payment receipts have been uploaded yet.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        submittedStudents.forEach(
+            function(user) {
+
+                createStudentCard(user);
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="card empty">
+                Unable to connect to the server.
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CREATE STUDENT CARD
+===================================================== */
+
+function createStudentCard(user) {
+
+    const status =
+        user.verificationStatus ||
+        "Pending";
+
+
+    let statusClass =
+        "pending";
+
+
+    if (status === "APPROVED") {
+
+        statusClass =
+            "verified";
+
+    }
+
+
+    if (status === "REJECTED") {
+
+        statusClass =
+            "rejected";
+
+    }
+
+
+    const receiptDate =
+        user.receipt &&
+        user.receipt.uploadedAt
+
+            ? new Date(
+                user.receipt.uploadedAt
+            ).toLocaleString()
+
+            : "Unknown";
+
+
+    const card =
+        document.createElement("div");
+
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
+
+        <h2>
+            ${escapeHTML(user.name)}
+        </h2>
+
+
+        <div class="student">
+
+            <p>
+                <strong>Matric:</strong>
+                ${escapeHTML(user.matric)}
+            </p>
+
+
+            <p>
+                <strong>Email:</strong>
+                ${escapeHTML(user.email)}
+            </p>
+
+
+            <p>
+                <strong>Level:</strong>
+                ${escapeHTML(user.level)}
+            </p>
+
+
+            <p>
+                <strong>Gender:</strong>
+                ${escapeHTML(user.gender)}
+            </p>
+
+
+            <p>
+                <strong>Payment:</strong>
+                ${escapeHTML(
+                    user.paymentStatus ||
+                    "Unknown"
+                )}
+            </p>
+
+
+            <p>
+
+                <strong>Status:</strong>
+
+                <span class="status ${statusClass}">
+                    ${escapeHTML(status)}
+                </span>
+
+            </p>
+
+        </div>
+
+
+        <div class="receipt">
+
+            <p>
+
+                <strong>Receipt:</strong>
+
+                ${escapeHTML(
+                    user.receipt.originalName
+                )}
+
+            </p>
+
+
+            <p>
+
+                <strong>Uploaded:</strong>
+
+                ${receiptDate}
+
+            </p>
+
+
+            <br>
+
+
+            <a
+                href="/uploads/${encodeURIComponent(
+                    user.receipt.filename
+                )}"
+                target="_blank"
+            >
+                📄 View Receipt
+            </a>
+
+        </div>
+
+
+        ${
+            status === "APPROVED"
+
+            ? `
+
+                <p
+                    style="
+                        color:green;
+                        font-weight:bold;
+                    "
+                >
+                    ✓ Payment already approved.
+                </p>
+
+            `
+
+            : status === "REJECTED"
+
+            ? `
+
+                <p
+                    style="
+                        color:red;
+                        font-weight:bold;
+                        margin-bottom:12px;
+                    "
+                >
+                    ✗ Payment rejected.
+                </p>
+
+
+                <div class="buttons">
+
+                    <button
+                        class="approve"
+                        onclick="
+                            approvePayment(
+                                '${user._id}'
+                            )
+                        "
+                    >
+                        ✓ Approve Payment
+                    </button>
+
+                </div>
+
+            `
+
+            : `
+
+                <div class="buttons">
+
+                    <button
+                        class="approve"
+                        onclick="
+                            approvePayment(
+                                '${user._id}'
+                            )
+                        "
+                    >
+                        ✓ Approve Payment
+                    </button>
+
+
+                    <button
+                        class="reject"
+                        onclick="
+                            rejectPayment(
+                                '${user._id}'
+                            )
+                        "
+                    >
+                        ✗ Reject Payment
+                    </button>
+
+                </div>
+
+            `
+        }
+
+    `;
+
+
+    container.appendChild(card);
+
+}
+
+
+
+/* =====================================================
+   APPROVE PAYMENT
+===================================================== */
+
+async function approvePayment(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to approve this payment?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/admin/approve",
+                {
+
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        id: id
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            window.location.href =
+                "/admin-login.html";
+
+            return;
+
+        }
+
+
+        if (data.success) {
+
+            showMessage(
+                "Payment approved successfully.",
+                "green"
+            );
+
+
+            loadStudents();
+
+        }
+
+        else {
+
+            showMessage(
+                data.message ||
+                "Failed to approve payment.",
+                "red"
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to connect to server.",
+            "red"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   REJECT PAYMENT
+===================================================== */
+
+async function rejectPayment(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to reject this payment?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/admin/reject",
+                {
+
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        id: id
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            window.location.href =
+                "/admin-login.html";
+
+            return;
+
+        }
+
+
+        if (data.success) {
+
+            showMessage(
+                "Payment rejected.",
+                "red"
+            );
+
+
+            loadStudents();
+
+        }
+
+        else {
+
+            showMessage(
+                data.message ||
+                "Failed to reject payment.",
+                "red"
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to connect to server.",
+            "red"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logoutAdmin() {
+
+    if (
+        !confirm(
+            "Are you sure you want to logout?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await fetch(
+            "/admin/logout",
+            {
+                method: "POST",
+                credentials: "include"
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "/admin-login.html";
+
+}
+
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    text,
+    color
+) {
+
+    message.textContent =
+        text;
+
+    message.style.color =
+        color;
+
+
+    setTimeout(
+        function() {
+
+            message.textContent =
+                "";
+
+        },
+        4000
+    );
+
+}
+
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadStudents();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Information - Hostel Allocation System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #1d3557;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #457b9d;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .top-bar h1 {
+            font-size: 25px;
+            color: #1d3557;
+            margin-bottom: 5px;
+        }
+
+        .top-bar p {
+            color: #777;
+        }
+
+        /* Academic Card */
+        .academic-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 900px;
+        }
+
+        .academic-card h2 {
+            color: #1d3557;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #457b9d;
+        }
+
+        .full-width {
+            margin-bottom: 20px;
+        }
+
+        .full-width select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .button-container {
+            margin-top: 25px;
+        }
+
+        .save-btn {
+            background: #1d3557;
+            color: white;
+            border: none;
+            padding: 13px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .save-btn:hover {
+            background: #457b9d;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <h2>HOSTEL SYSTEM</h2>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="profile.html">Profile</a>
+
+        <a href="academic.html" class="active">Academic</a>
+
+        <a href="allocation.html">Hostel Allocation</a>
+
+        <a href="upload.html">Upload Receipt</a>
+
+        <a href="settings.html">Settings</a>
+
+        <a href="#" onclick="logout()">Logout</a>
+
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <div class="top-bar">
+            <h1>Academic Information</h1>
+            <p>Enter and manage your academic details.</p>
+        </div>
+
+
+        <div class="academic-card">
+
+            <h2>Student Academic Details</h2>
+
+            <form id="academicForm">
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="matric">Matriculation Number</label>
+                        <input
+                            type="text"
+                            id="matric"
+                            name="matric"
+                            placeholder="Enter matric number"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="level">Current Level</label>
+
+                        <select id="level" name="level" required>
+                            <option value="">Select Level</option>
+                            <option value="100">100 Level</option>
+                            <option value="200">200 Level</option>
+                            <option value="300">300 Level</option>
+                            <option value="400">400 Level</option>
+                            <option value="500">500 Level</option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="department">Department</label>
+
+                        <input
+                            type="text"
+                            id="department"
+                            name="department"
+                            placeholder="e.g. Software Engineering"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="faculty">Faculty</label>
+
+                        <input
+                            type="text"
+                            id="faculty"
+                            name="faculty"
+                            placeholder="Enter faculty"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="session">Academic Session</label>
+
+                        <select id="session" name="session" required>
+                            <option value="">Select Session</option>
+                            <option value="2025/2026">2025/2026</option>
+                            <option value="2026/2027">2026/2027</option>
+                            <option value="2027/2028">2027/2028</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="semester">Current Semester</label>
+
+                        <select id="semester" name="semester" required>
+                            <option value="">Select Semester</option>
+                            <option value="First Semester">First Semester</option>
+                            <option value="Second Semester">Second Semester</option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="cgpa">Current CGPA</label>
+
+                        <input
+                            type="number"
+                            id="cgpa"
+                            name="cgpa"
+                            placeholder="e.g. 3.50"
+                            min="0"
+                            max="5"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="status">Academic Status</label>
+
+                        <select id="status" name="status" required>
+                            <option value="">Select Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Graduating">Graduating</option>
+                            <option value="Deferred">Deferred</option>
+                            <option value="Suspended">Suspended</option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="full-width">
+
+                    <label for="programme">
+                        Programme
+                    </label>
+
+                    <select id="programme" name="programme" required>
+                        <option value="">Select Programme</option>
+                        <option value="B.Sc. Software Engineering">
+                            B.Sc. Software Engineering
+                        </option>
+                        <option value="B.Sc. Computer Science">
+                            B.Sc. Computer Science
+                        </option>
+                        <option value="B.Sc. Information Technology">
+                            B.Sc. Information Technology
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="button-container">
+
+                    <button type="submit" class="save-btn">
+                        Save Academic Information
+                    </button>
+
+                </div>
+
+                <div id="message" class="message"></div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const academicForm = document.getElementById("academicForm");
+        const message = document.getElementById("message");
+
+
+        academicForm.addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+            const academicData = {
+
+                matric: document.getElementById("matric").value,
+                level: document.getElementById("level").value,
+                department: document.getElementById("department").value,
+                faculty: document.getElementById("faculty").value,
+                session: document.getElementById("session").value,
+                semester: document.getElementById("semester").value,
+                cgpa: document.getElementById("cgpa").value,
+                status: document.getElementById("status").value,
+                programme: document.getElementById("programme").value
+
+            };
+
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:5000/api/academic",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        credentials: "include",
+
+                        body: JSON.stringify(academicData)
+                    }
+                );
+
+
+                const result = await response.json();
+
+
+                if (response.ok) {
+
+                    message.style.color = "green";
+                    message.textContent =
+                        "Academic information saved successfully.";
+
+                } else {
+
+                    message.style.color = "red";
+                    message.textContent =
+                        result.message || "Unable to save information.";
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.style.color = "red";
+                message.textContent =
+                    "Unable to connect to the server.";
+
+            }
+
+        });
+
+
+        function logout() {
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+</body>
+</html>

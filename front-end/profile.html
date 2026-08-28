@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#f4f6f9;
+overflow-x:hidden;
+}
+
+/* NAVBAR */
+.navbar{
+height:70px;
+background:#fff;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 25px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.menu-btn{
+font-size:22px;
+cursor:pointer;
+color:#0b1f3a;
+}
+
+.logo{
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.portal-name{
+font-size:20px;
+font-weight:600;
+color:#0b1f3a;
+}
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:25px;
+}
+
+.notification{
+position:relative;
+font-size:20px;
+cursor:pointer;
+}
+
+.badge{
+position:absolute;
+top:-8px;
+right:-8px;
+background:red;
+color:white;
+font-size:10px;
+padding:2px 6px;
+border-radius:50%;
+}
+
+.user{
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+position:relative;
+}
+
+.user img{
+width:40px;
+height:40px;
+border-radius:50%;
+}
+
+.username{
+font-weight:600;
+}
+
+/* DROPDOWN */
+.dropdown{
+position:absolute;
+top:55px;
+right:0;
+background:white;
+width:180px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+display:none;
+overflow:hidden;
+}
+
+.dropdown a{
+display:block;
+padding:12px 15px;
+text-decoration:none;
+color:#333;
+}
+
+.dropdown a:hover{
+background:#f3f3f3;
+}
+
+/* SIDEBAR */
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+height:100vh;
+width:260px;
+background:#0b1f3a;
+padding-top:20px;
+transform:translateX(-100%);
+transition:.3s ease;
+z-index:2000;
+}
+
+.sidebar.active{
+transform:translateX(0);
+}
+
+.sidebar-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+margin-bottom:25px;
+}
+
+.sidebar-header h3{
+color:white;
+}
+
+.close-btn{
+font-size:22px;
+color:white;
+cursor:pointer;
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar ul li{
+margin:5px 15px;
+}
+
+.sidebar ul li a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px;
+text-decoration:none;
+color:white;
+border-radius:8px;
+}
+
+.sidebar ul li a:hover{
+background:#d4af37;
+}
+
+.sidebar ul li a.active{
+background:#d4af37;
+}
+
+/* OVERLAY */
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+z-index:1500;
+}
+
+.overlay.active{
+display:block;
+}
+
+/* MAIN */
+.main{
+padding:100px 25px 30px;
+}
+
+.profile-container{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:25px;
+}
+
+/* CARDS */
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+/* PROFILE CARD */
+.profile-card{
+text-align:center;
+}
+
+.profile-card img{
+width:130px;
+height:130px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #d4af37;
+cursor:pointer;
+transition:.3s;
+}
+
+.profile-card img:hover{
+transform:scale(1.05);
+}
+
+.profile-card h2{
+margin-top:15px;
+color:#0b1f3a;
+}
+
+.profile-card p{
+color:#777;
+margin-top:5px;
+}
+
+.btn{
+margin-top:15px;
+background:#d4af37;
+color:white;
+border:none;
+padding:12px;
+width:100%;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.btn:hover{
+background:#bc9b30;
+}
+
+/* DETAILS */
+.details-title{
+margin-bottom:20px;
+color:#0b1f3a;
+}
+
+.info-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.info-box{
+background:#f8f9fb;
+padding:15px;
+border-radius:10px;
+}
+
+.info-box label{
+font-size:13px;
+color:#777;
+display:block;
+margin-bottom:5px;
+}
+
+.info-box span{
+font-weight:600;
+color:#222;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+.profile-container{
+grid-template-columns:1fr;
+}
+}
+
+@media(max-width:768px){
+.portal-name,
+.username{
+display:none;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+<div class="sidebar-header">
+<h3>Menu</h3>
+<i class="fas fa-times close-btn" onclick="closeSidebar()"></i>
+</div>
+
+<ul>
+<li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+<li><a href="allocation.html"><i class="fas fa-bed"></i> Hostel Allocation</a></li>
+<li><a href="profile.html" class="active"><i class="fas fa-user"></i> Profile</a></li>
+<li><a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a></li>
+<li><a href="academic.html"><i class="fas fa-book"></i> Academic</a></li>
+<li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+<li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+<li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+</ul>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+<div class="nav-left">
+<i class="fas fa-bars menu-btn" onclick="openSidebar()"></i>
+<img src="photo/mciu.jpg" class="logo">
+<div class="portal-name">MCIU Hostel Portal</div>
+</div>
+
+<div class="nav-right">
+<div class="notification">
+<i class="fas fa-bell"></i>
+<span class="badge">3</span>
+</div>
+
+<div class="user" onclick="toggleDropdown()">
+<img src="photo/mciu.jpg">
+<span class="username">Christian ▼</span>
+
+<div class="dropdown" id="dropdown">
+<a href="profile.html">Profile</a>
+<a href="settings.html">Settings</a>
+<a href="login.html">Logout</a>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="profile-container">
+
+<!-- LEFT -->
+<div class="card profile-card">
+
+<img id="profileImg" src="photo/mciu.jpg">
+
+<input type="file" id="imageInput" accept="image/*" hidden>
+
+<h2>Christian </h2>
+<p>Final Year Student</p>
+
+<button class="btn" onclick="document.getElementById('imageInput').click()">
+Change Profile Picture
+</button>
+
+<button class="btn">Edit Profile</button>
+<button class="btn">Change Password</button>
+
+</div>
+
+<!-- RIGHT -->
+<div class="card">
+
+<h2 class="details-title">Student Information</h2>
+
+<div class="info-grid">
+
+<div class="info-box">
+<label>Full Name</label>
+<span>Aladetuyi Adegoke .T. Chris</span>
+</div>
+
+<div class="info-box">
+<label>Matric Number</label>
+<span>NS/SE/22/0856</span>
+</div>
+
+<div class="info-box">
+<label>Department</label>
+<span>Software Engineering</span>
+</div>
+
+<div class="info-box">
+<label>Faculty</label>
+<span>MMSC</span>
+</div>
+
+<div class="info-box">
+<label>Level</label>
+<span>400 Level</span>
+</div>
+
+<div class="info-box">
+<label>Email</label>
+<span>christianaladebs@gmail.com</span>
+</div>
+
+<div class="info-box">
+<label>Phone</label>
+<span>08109384621</span>
+</div>
+
+<div class="info-box">
+<label>Hostel</label>
+<span>G Block</span>
+</div>
+
+<div class="info-box">
+<label>Room</label>
+<span>G9</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* SIDEBAR */
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+function openSidebar(){
+sidebar.classList.add("active");
+overlay.classList.add("active");
+}
+
+function closeSidebar(){
+sidebar.classList.remove("active");
+overlay.classList.remove("active");
+}
+
+overlay.addEventListener("click", closeSidebar);
+
+/* DROPDOWN */
+function toggleDropdown(){
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display =
+dropdown.style.display === "block" ? "none" : "block";
+}
+
+window.onclick = function(e){
+if(!e.target.closest('.user')){
+document.getElementById("dropdown").style.display = "none";
+}
+}
+
+/* PROFILE IMAGE UPLOAD */
+window.onload = function(){
+const saved = localStorage.getItem("profileImage");
+if(saved){
+document.getElementById("profileImg").src = saved;
+}
+};
+
+document.getElementById("imageInput").addEventListener("change", function(e){
+
+const file = e.target.files[0];
+
+if(file){
+const reader = new FileReader();
+
+reader.onload = function(event){
+const img = event.target.result;
+document.getElementById("profileImg").src = img;
+localStorage.setItem("profileImage", img);
+};
+
+reader.readAsDataURL(file);
+}
+
+});
+
+</script>
+
+</body>
+</html>

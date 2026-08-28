@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - MCIU Portal</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+/* ================= BASE ================= */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#f4f6f9;
+overflow-x:hidden;
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+height:70px;
+background:#0b1f3a;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 25px;
+color:white;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.menu-btn{
+font-size:22px;
+cursor:pointer;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:50%;
+}
+
+.portal-name{
+font-size:18px;
+font-weight:600;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+height:100vh;
+width:260px;
+background:#0b1f3a;
+transform:translateX(-100%);
+transition:.3s ease;
+z-index:2000;
+padding-top:20px;
+}
+
+.sidebar.active{
+transform:translateX(0);
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar ul li a{
+display:block;
+padding:14px 20px;
+color:white;
+text-decoration:none;
+}
+
+.sidebar ul li a:hover{
+background:#d4af37;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.5);
+display:none;
+z-index:1500;
+}
+
+.overlay.active{
+display:block;
+}
+
+/* ================= MAIN ================= */
+.main{
+padding:110px 25px 30px;
+max-width:1100px;
+margin:auto;
+}
+
+.title{
+font-size:24px;
+font-weight:700;
+color:#0b1f3a;
+margin-bottom:20px;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h2{
+margin-bottom:15px;
+color:#0b1f3a;
+}
+
+/* INPUTS */
+label{
+font-size:13px;
+font-weight:600;
+color:#333;
+display:block;
+margin-top:12px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:6px;
+border-radius:8px;
+border:1px solid #ddd;
+outline:none;
+}
+
+input:focus{
+border-color:#d4af37;
+}
+
+/* BUTTON */
+.btn{
+width:100%;
+margin-top:15px;
+padding:12px;
+border:none;
+background:#d4af37;
+color:white;
+font-weight:600;
+border-radius:8px;
+cursor:pointer;
+}
+
+.btn:hover{
+background:#b9962f;
+}
+
+/* SWITCH */
+.switch{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-top:15px;
+padding:10px;
+background:#f8f9fb;
+border-radius:8px;
+}
+
+.switch input{
+width:auto;
+}
+
+/* INFO BOX */
+.info{
+background:#f8f9fb;
+padding:12px;
+border-radius:8px;
+margin-top:10px;
+font-size:14px;
+}
+
+/* SUCCESS */
+.success{
+display:none;
+background:#e7fff0;
+color:#1b7a3a;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+@media(max-width:900px){
+.grid{grid-template-columns:1fr;}
+.portal-name{display:none;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+<ul>
+<li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+<li><a href="allocation.html"><i class="fas fa-bed"></i> Hostel</a></li>
+<li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+<li><a href="contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+<li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+<li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+</ul>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+<div class="nav-left">
+<i class="fas fa-bars menu-btn" onclick="openSidebar()"></i>
+<img src="photo/mciu.jpg" class="logo">
+<div class="portal-name">MCIU Hostel Portal</div>
+</div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="title">Settings</div>
+
+<div id="success" class="success">✔ Settings saved successfully</div>
+
+<div class="grid">
+
+<!-- PROFILE SETTINGS -->
+<div class="card">
+
+<h2>Profile Settings</h2>
+
+<label>Display Name</label>
+<input type="text" id="displayName" placeholder="e.g. Aladetuyi">
+
+<label>Matric Number</label>
+<input type="text" value="AUTO LOADED" disabled>
+
+<label>Email</label>
+<input type="text" value="AUTO LOADED" disabled>
+
+<button class="btn" onclick="saveSettings()">Save Changes</button>
+
+</div>
+
+<!-- SECURITY -->
+<div class="card">
+
+<h2>Security</h2>
+
+<label>Current Password</label>
+<input type="password" placeholder="Enter current password">
+
+<label>New Password</label>
+<input type="password" placeholder="Enter new password">
+
+<label>Confirm Password</label>
+<input type="password" placeholder="Confirm password">
+
+<button class="btn">Update Password</button>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="card">
+
+<h2>Notifications</h2>
+
+<div class="switch">
+<span>Email Notifications</span>
+<input type="checkbox" checked>
+</div>
+
+<div class="switch">
+<span>SMS Alerts</span>
+<input type="checkbox">
+</div>
+
+<div class="switch">
+<span>System Updates</span>
+<input type="checkbox" checked>
+</div>
+
+</div>
+
+<!-- ACCOUNT INFO -->
+<div class="card">
+
+<h2>Account Info</h2>
+
+<div class="info">Matric Number: AUTO LOADED</div>
+<div class="info">Level: AUTO LOADED</div>
+<div class="info">Gender: AUTO LOADED</div>
+
+<button class="btn" style="background:red;">Delete Account</button>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* SIDEBAR */
+function openSidebar(){
+document.getElementById("sidebar").classList.add("active");
+document.getElementById("overlay").classList.add("active");
+}
+
+function closeSidebar(){
+document.getElementById("sidebar").classList.remove("active");
+document.getElementById("overlay").classList.remove("active");
+}
+
+/* SAVE SETTINGS */
+function saveSettings(){
+const msg = document.getElementById("success");
+msg.style.display = "block";
+
+setTimeout(() => {
+msg.style.display = "none";
+}, 3000);
+}
+
+</script>
+
+</body>
+</html>

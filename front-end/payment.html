@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment Verification - MCIU</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #333;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, .08);
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            transition: .3s;
+        }
+
+        .menu-btn:hover {
+            color: #d4af37;
+            transform: rotate(90deg);
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            object-fit: cover;
+        }
+
+        .portal-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 270px;
+            height: 100vh;
+            background: #1f2937;
+            transition: .35s;
+            z-index: 2000;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, .3);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .sidebar-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+        }
+
+        .sidebar-header p {
+            color: #ccc;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .sidebar-menu {
+            margin-top: 20px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            text-decoration: none;
+            padding: 16px 25px;
+            border-left: 4px solid transparent;
+            transition: .3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #374151;
+            border-left-color: #d4af37;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+        }
+
+
+        /* ================= OVERLAY ================= */
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            opacity: 0;
+            visibility: hidden;
+            transition: .3s;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            padding: 105px 25px 40px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #777;
+        }
+
+
+        /* ================= GRID ================= */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+        }
+
+        .card h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= STUDENT INFO ================= */
+
+        .student-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1f2937;
+            text-align: right;
+        }
+
+
+        /* ================= UPLOAD ================= */
+
+        .upload-box {
+            border: 2px dashed #d4af37;
+            border-radius: 12px;
+            padding: 35px 20px;
+            text-align: center;
+            background: #fffdf5;
+        }
+
+        .upload-box i {
+            font-size: 50px;
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h3 {
+            margin-bottom: 8px;
+        }
+
+        .upload-box p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+
+        /* ================= BUTTON ================= */
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            background: #d4af37;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .btn:hover {
+            background: #b8962f;
+        }
+
+        .btn:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+
+        /* ================= STATUS ================= */
+
+        .status-box {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fff3cd;
+            color: #856404;
+            margin-top: 20px;
+        }
+
+        .status-box i {
+            margin-right: 8px;
+        }
+
+
+        /* ================= GUIDELINES ================= */
+
+        .guidelines {
+            background: #fff8e1;
+            border-left: 5px solid #d4af37;
+            padding: 18px;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .guidelines ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+
+        /* ================= FILE NAME ================= */
+
+        .selected-file {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+            word-break: break-word;
+        }
+
+        .selected-file i {
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+
+        /* ================= TOAST ================= */
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            max-width: 400px;
+            background: #1f2937;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: .3s;
+            z-index: 5000;
+        }
+
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 850px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-name {
+                display: none;
+            }
+
+            .main {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+            #toast {
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                max-width: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <div id="sidebar" class="sidebar">
+
+        <div class="sidebar-header">
+
+            <img
+                src="photo/mciu.jpg"
+                class="sidebar-logo"
+                alt="MCIU"
+            >
+
+            <h2>MCIU Portal</h2>
+
+            <p>Hostel Management System</p>
+
+        </div>
+
+
+        <div class="sidebar-menu">
+
+            <a href="dashboard.html">
+
+                <i class="fas fa-home"></i>
+
+                Dashboard
+
+            </a>
+
+
+            <a href="allocation.html">
+
+                <i class="fas fa-bed"></i>
+
+                Hostel Allocation
+
+            </a>
+
+
+            <a
+                href="payment.html"
+                class="active"
+            >
+
+                <i class="fas fa-credit-card"></i>
+
+                Payment Verification
+
+            </a>
+
+
+            <a href="profile.html">
+
+                <i class="fas fa-user"></i>
+
+                My Profile
+
+            </a>
+
+
+            <a href="#">
+
+                <i class="fas fa-history"></i>
+
+                Allocation History
+
+            </a>
+
+
+            <a
+                href="#"
+                id="logoutBtn"
+            >
+
+                <i class="fas fa-sign-out-alt"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= OVERLAY ================= -->
+
+    <div
+        id="overlay"
+        class="overlay"
+    ></div>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <div class="navbar">
+
+        <div class="nav-left">
+
+            <i
+                class="fas fa-bars menu-btn"
+                id="menuBtn"
+            ></i>
+
+
+            <img
+                src="photo/mciu.jpg"
+                class="logo"
+                alt="MCIU"
+            >
+
+
+            <div class="portal-name">
+
+                MCIU Hostel Allocation Portal
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="main">
+
+
+        <div class="page-title">
+
+            <h1>
+                Payment Verification
+            </h1>
+
+            <p>
+                Upload your school fee payment receipt
+                for verification.
+            </p>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <!-- ================= LEFT CARD ================= -->
+
+            <div class="card">
+
+                <h2>
+                    Student Information
+                </h2>
+
+
+                <div class="student-info">
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Name
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="studentName"
+                        >
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Matric Number
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="studentMatric"
+                        >
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Level
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="studentLevel"
+                        >
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <h2>
+                    Upload School Fee Receipt
+                </h2>
+
+
+                <div class="upload-box">
+
+
+                    <i class="fas fa-file-invoice"></i>
+
+
+                    <h3>
+                        Select Your Receipt
+                    </h3>
+
+
+                    <p>
+                        JPG, PNG or PDF files only.
+                        Maximum size: 10MB.
+                    </p>
+
+
+                    <input
+                        type="file"
+                        id="receipt"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                    >
+
+
+                    <div
+                        id="selectedFile"
+                        class="selected-file"
+                    ></div>
+
+
+                    <button
+                        type="button"
+                        class="btn"
+                        id="uploadBtn"
+                    >
+
+                        <i class="fas fa-upload"></i>
+
+                        Upload Receipt
+
+                    </button>
+
+
+                </div>
+
+
+                <div
+                    id="statusBox"
+                    class="status-box"
+                >
+
+                    <i class="fas fa-clock"></i>
+
+                    Payment Status:
+
+                    <strong id="paymentStatus">
+                        Not Submitted
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= RIGHT CARD ================= -->
+
+            <div class="card">
+
+
+                <h2>
+                    Payment Guidelines
+                </h2>
+
+
+                <div class="guidelines">
+
+
+                    <p>
+                        Please ensure that your receipt:
+                    </p>
+
+
+                    <ul>
+
+                        <li>
+                            Belongs to you.
+                        </li>
+
+                        <li>
+                            Contains your correct
+                            matriculation number.
+                        </li>
+
+                        <li>
+                            Clearly shows the amount paid.
+                        </li>
+
+                        <li>
+                            Clearly shows the payment date.
+                        </li>
+
+                        <li>
+                            Is clear and readable.
+                        </li>
+
+                        <li>
+                            Has not been previously submitted.
+                        </li>
+
+                    </ul>
+
+
+                </div>
+
+
+                <br>
+
+
+                <div class="guidelines">
+
+                    <strong>
+                        Important
+                    </strong>
+
+                    <p>
+                        Your receipt will be checked before
+                        you become eligible for hostel allocation.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================= TOAST ================= -->
+
+    <div id="toast"></div>
+
+
+    <script>
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const menuBtn =
+            document.getElementById("menuBtn");
+
+        const overlay =
+            document.getElementById("overlay");
+
+
+        function openSidebar() {
+
+            sidebar.classList.add("active");
+
+            overlay.classList.add("active");
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove("active");
+
+            overlay.classList.remove("active");
+
+        }
+
+
+        menuBtn.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    sidebar.classList.contains("active")
+                ) {
+
+                    closeSidebar();
+
+                } else {
+
+                    openSidebar();
+
+                }
+
+            }
+        );
+
+
+        overlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+
+        /* =====================================================
+           LOAD LOGGED-IN USER
+        ===================================================== */
+
+        async function loadUser() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/user",
+                        {
+                            method: "GET",
+                            credentials: "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "User response:",
+                    data
+                );
+
+
+                if (!data.success) {
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                const user =
+                    data.user;
+
+
+                document.getElementById(
+                    "studentName"
+                ).textContent =
+                    user.name || "N/A";
+
+
+                document.getElementById(
+                    "studentMatric"
+                ).textContent =
+                    user.matric || "N/A";
+
+
+                document.getElementById(
+                    "studentLevel"
+                ).textContent =
+                    user.level || "N/A";
+
+
+                document.getElementById(
+                    "paymentStatus"
+                ).textContent =
+                    user.paymentStatus ||
+                    "Not Submitted";
+
+
+            } catch (error) {
+
+                console.error(
+                    "User loading error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        loadUser();
+
+
+
+        /* =====================================================
+           FILE SELECTION
+        ===================================================== */
+
+        const receiptInput =
+            document.getElementById("receipt");
+
+        const selectedFile =
+            document.getElementById("selectedFile");
+
+
+        receiptInput.addEventListener(
+            "change",
+            function () {
+
+                if (!receiptInput.files.length) {
+
+                    selectedFile.innerHTML = "";
+
+                    return;
+
+                }
+
+
+                const file =
+                    receiptInput.files[0];
+
+
+                const sizeMB =
+                    (
+                        file.size /
+                        (1024 * 1024)
+                    ).toFixed(2);
+
+
+                selectedFile.innerHTML =
+                    `
+                    <i class="fas fa-file"></i>
+                    <strong>${file.name}</strong>
+                    (${sizeMB} MB)
+                    `;
+
+            }
+        );
+
+
+
+        /* =====================================================
+           RECEIPT UPLOAD
+        ===================================================== */
+
+        const uploadBtn =
+            document.getElementById("uploadBtn");
+
+
+        uploadBtn.addEventListener(
+            "click",
+            async function () {
+
+
+                /* CHECK FILE */
+
+                if (
+                    !receiptInput.files.length
+                ) {
+
+                    showToast(
+                        "Please select a receipt first.",
+                        "#dc3545"
+                    );
+
+                    return;
+
+                }
+
+
+                const file =
+                    receiptInput.files[0];
+
+
+                /* CHECK FILE SIZE */
+
+                if (
+                    file.size >
+                    10 * 1024 * 1024
+                ) {
+
+                    showToast(
+                        "File is larger than 10MB.",
+                        "#dc3545"
+                    );
+
+                    return;
+
+                }
+
+
+                /* CHECK FILE TYPE */
+
+                const allowedTypes = [
+
+                    "image/jpeg",
+                    "image/png",
+                    "image/jpg",
+                    "application/pdf"
+
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    showToast(
+                        "Only JPG, PNG and PDF receipts are allowed.",
+                        "#dc3545"
+                    );
+
+                    return;
+
+                }
+
+
+                /* CREATE FORM DATA */
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "receipt",
+                    file
+                );
+
+
+                /* DISABLE BUTTON */
+
+                uploadBtn.disabled =
+                    true;
+
+
+                uploadBtn.innerHTML =
+                    `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Uploading...
+                    `;
+
+
+                try {
+
+
+                    console.log(
+                        "Starting receipt upload..."
+                    );
+
+
+                    const response =
+                        await fetch(
+                            "http://localhost:5000/api/payment/upload",
+                            {
+                                method: "POST",
+
+                                body: formData,
+
+                                credentials: "include"
+                            }
+                        );
+
+
+                    console.log(
+                        "Server response status:",
+                        response.status
+                    );
+
+
+                    /* GET RESPONSE */
+
+                    const data =
+                        await response.json();
+
+
+                    console.log(
+                        "Upload response:",
+                        data
+                    );
+
+
+                    if (data.success) {
+
+
+                        showToast(
+                            data.message ||
+                            "Receipt uploaded successfully!",
+                            "#28a745"
+                        );
+
+
+                        document.getElementById(
+                            "paymentStatus"
+                        ).textContent =
+                            "Submitted";
+
+
+                        /* Clear selected file */
+
+                        receiptInput.value = "";
+
+                        selectedFile.innerHTML = "";
+
+
+                    } else {
+
+
+                        showToast(
+                            data.message ||
+                            "Receipt upload failed.",
+                            "#dc3545"
+                        );
+
+                    }
+
+
+                } catch (error) {
+
+
+                    console.error(
+                        "UPLOAD ERROR:",
+                        error
+                    );
+
+
+                    showToast(
+                        "Upload error: " +
+                        error.message,
+                        "#dc3545"
+                    );
+
+
+                } finally {
+
+
+                    uploadBtn.disabled =
+                        false;
+
+
+                    uploadBtn.innerHTML =
+                        `
+                        <i class="fas fa-upload"></i>
+                        Upload Receipt
+                        `;
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        document.getElementById(
+            "logoutBtn"
+        ).addEventListener(
+            "click",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "http://localhost:5000/logout",
+                            {
+                                method: "POST",
+                                credentials: "include"
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    console.log(
+                        "Logout:",
+                        data
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Logout error:",
+                        error
+                    );
+
+                }
+
+
+                window.location.href =
+                    "login.html";
+
+            }
+        );
+
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        function showToast(
+            message,
+            color
+        ) {
+
+            const toast =
+                document.getElementById("toast");
+
+
+            toast.textContent =
+                message;
+
+
+            toast.style.background =
+                color;
+
+
+            toast.classList.add(
+                "show"
+            );
+
+
+            setTimeout(
+                function () {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                4000
+            );
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>
